@@ -1,6 +1,7 @@
 package kg.timetotravel.anidea.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +21,20 @@ import kg.timetotravel.anidea.R;
 // Здесь же указали наш собственный ViewHolder, который предоставит нам доступ к View-компонентам
 public class IdeasAdapter extends RecyclerView.Adapter<IdeasAdapter.TweetViewHolder> {
 
+    private final String TAG = "IdeasAdapter";
+
     private List<Comments> tweetList = new ArrayList<>();
 
     public void setItems(Collection<Comments> tweets) {
+        tweetList.clear();
         tweetList.addAll(tweets);
+        Log.i(TAG, "setItems: " + tweets.size());
         notifyDataSetChanged();
     }
 
-    public void clearItems() {
-        tweetList.clear();
-        notifyDataSetChanged();
+    public List<Comments> getTweetList(){
+        Log.i(TAG, "getTweetList: size " + tweetList.size());
+        return tweetList;
     }
 
     @Override

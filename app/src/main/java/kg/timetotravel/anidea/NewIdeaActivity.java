@@ -69,14 +69,25 @@ public class NewIdeaActivity extends AppCompatActivity {
     }
 
     public void save(View view){
+        String name = nameText.getText().toString();
+        String date = dateText.getText().toString();
+        String picUri;
+        if (photoURI != null){
+            picUri = String.valueOf(photoURI);
+        } else{
+            picUri = null;
+        }
 
-        boolean result = JSONHelper.exportToJSON(this, ideas);
-        if(result){
-            Toast.makeText(this, "Данные сохранены", Toast.LENGTH_LONG).show();
-        }
-        else{
-            Toast.makeText(this, "Не удалось сохранить данные", Toast.LENGTH_LONG).show();
-        }
+        Comments comment = new Comments(name, date, picUri);
+        comment.save();
+
+        Intent intent = new Intent();
+
+        intent.putExtra("id", comment.getId());
+
+        setResult(RESULT_OK, intent);
+
+        finish();
     }
     public void open(View view){
         ideas = JSONHelper.importFromJSON(this);

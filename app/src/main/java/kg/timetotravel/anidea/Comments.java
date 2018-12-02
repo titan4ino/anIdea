@@ -1,13 +1,16 @@
 package kg.timetotravel.anidea;
 
-public class Comments {
+import com.orm.SugarRecord;
+
+public class Comments extends SugarRecord<Comments>{
 
     private String body;
     private String name;
     private String imageUrl;
 
+    public Comments(){}
 
-    Comments(String _body, String _name, String _imageUrl) {
+    public Comments(String _body, String _name, String _imageUrl) {
         body = _body;
         name = _name;
         imageUrl = _imageUrl;
