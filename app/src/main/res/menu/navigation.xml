@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:title="button" />
+        android:title="" />
 
     <item
         android:id="@+id/navigation_dashboard"
@@ -12,6 +12,6 @@
 
     <item
         android:id="@+id/navigation_notifications"
-        android:title="button" />
+        android:title="" />
 
 </menu>

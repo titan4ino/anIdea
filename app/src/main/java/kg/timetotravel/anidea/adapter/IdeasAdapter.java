@@ -28,12 +28,10 @@ public class IdeasAdapter extends RecyclerView.Adapter<IdeasAdapter.TweetViewHol
     public void setItems(Collection<Comments> tweets) {
         tweetList.clear();
         tweetList.addAll(tweets);
-        Log.i(TAG, "setItems: " + tweets.size());
         notifyDataSetChanged();
     }
 
     public List<Comments> getTweetList(){
-        Log.i(TAG, "getTweetList: size " + tweetList.size());
         return tweetList;
     }
 
@@ -64,11 +62,7 @@ public class IdeasAdapter extends RecyclerView.Adapter<IdeasAdapter.TweetViewHol
         private TextView nameTextView;
         private TextView creationDateTextView;
         private ImageView tweetImageView;
-        /*private TextView nickTextView;
-        private ImageView userImageView;
-        private TextView contentTextView;
-        private TextView retweetsTextView;
-        private TextView likesTextView;*/
+        private TextView ratingView;
 
         // Мы также создали конструктор, который принимает на вход View-компонент строкИ
         // и ищет все дочерние компоненты
@@ -77,32 +71,16 @@ public class IdeasAdapter extends RecyclerView.Adapter<IdeasAdapter.TweetViewHol
             nameTextView = itemView.findViewById(R.id.comBody);
             creationDateTextView = itemView.findViewById(R.id.comName);
             tweetImageView = itemView.findViewById(R.id.ideaImageView);
-            //userImageView = itemView.findViewById(R.id.profile_image_view);
-            /*nickTextView = itemView.findViewById(R.id.author_nick_text_view);
-            contentTextView = itemView.findViewById(R.id.tweet_content_text_view);
-            retweetsTextView = itemView.findViewById(R.id.retweets_text_view);
-            likesTextView = itemView.findViewById(R.id.likes_text_view);*/
+            ratingView = itemView.findViewById(R.id.ratingView);
         }
         public void bind(Comments tweet) {
             nameTextView.setText(tweet.getBody());
             creationDateTextView.setText(tweet.getName());
-
-            //Picasso.with(itemView.getContext()).load(tweet.getUser().getImageUrl()).into(userImageView);
+            ratingView.setText(String.valueOf(tweet.getRating()) + "/10");
 
             String tweetPhotoUrl = tweet.getImageUrl();
             Picasso.with(itemView.getContext()).load(tweetPhotoUrl).into(tweetImageView);
             tweetImageView.setVisibility(tweetPhotoUrl != null ? View.VISIBLE : View.GONE);
         }
-
-/*        private String getFormattedDate(String rawDate) {
-            SimpleDateFormat utcFormat = new SimpleDateFormat(TWITTER_RESPONSE_FORMAT, Locale.ROOT);
-            SimpleDateFormat displayedFormat = new SimpleDateFormat(MONTH_DAY_FORMAT, Locale.getDefault());
-            try {
-                Date date = utcFormat.parse(rawDate);
-                return displayedFormat.format(date);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
     }
 }

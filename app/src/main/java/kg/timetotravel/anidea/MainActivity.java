@@ -26,8 +26,6 @@ import kg.timetotravel.anidea.adapter.IdeasAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity";
-
     private IdeasAdapter tweetAdapter;
 
     @BindView(R.id.navigation)
@@ -36,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tweets_recycler_view)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.buttonTest)
-    Button buttonTest;
+    /*@BindView(R.id.buttonTest)
+    Button buttonTest;*/
 
     Random random;
 
@@ -55,14 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onHide() {
-                navigation.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(150);
-                // do your hiding animation here
+                navigation.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(170);
+                // hiding anim
             }
 
             @Override
             public void onShow() {
                 navigation.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(0);
-                // do your showing animation here
+                // showing anim
             }
         });
         initRecyclerView();
@@ -72,13 +70,13 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView tweetsRecyclerView = findViewById(R.id.tweets_recycler_view);
         tweetsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         tweetAdapter = new IdeasAdapter();
-
         tweetAdapter.setItems(Comments.findWithQuery(Comments.class, "SELECT * FROM COMMENTS ORDER BY ID DESC"));
 
         tweetsRecyclerView.setAdapter(tweetAdapter);
     }
 
-    @OnClick(R.id.buttonTest)
+    //saved this to remember how ButterKnife works
+    /*@OnClick(R.id.buttonTest)
     public void OnClick(View view) {
 
         Comments comment = new Comments("Test : " + random.nextInt(),
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         comment.save();
         Log.i(TAG, "OnClick: ON test Click");
-    }
+    }*/
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -114,11 +112,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        long id = data.getExtras().getLong("id");
-
-        Comments comments = Comments.findById(Comments.class, id);
-
-        tweetAdapter.getTweetList().add(0, comments);
-        tweetAdapter.notifyDataSetChanged();
+        if(data != null){
+            long id = data.getExtras().getLong("id");
+            Comments comments = Comments.findById(Comments.class, id);
+            tweetAdapter.getTweetList().add(0, comments);
+            tweetAdapter.notifyDataSetChanged();
+        }
     }
 }

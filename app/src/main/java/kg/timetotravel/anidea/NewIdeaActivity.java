@@ -1,7 +1,6 @@
 package kg.timetotravel.anidea;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -10,95 +9,74 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class NewIdeaActivity extends AppCompatActivity {
-    private ArrayAdapter<Idea> adapter;
-    private EditText nameText, dateText, pic;
-    private List<Idea> ideas;
-    ListView listView;
+public class NewIdeaActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener  {
+    private EditText nameText;
+    private TextView rateBarNum;
     ImageView imageView2;
 
     static final int REQUEST_TAKE_PHOTO = 1;
-    private String mCurrentPhotoPath;
-    private ImageView imageView;
+    private ImageView thumbImage;
     static Uri photoURI;
+    SeekBar seekBar;
+    File photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_idea);
-
-        nameText = (EditText) findViewById(R.id.nameText);
-        dateText = (EditText) findViewById(R.id.dateText);
-        //pic = (EditText) findViewById(R.id.picUri);
-        pic = null;
-
-        ideas = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.list);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ideas);
-        listView.setAdapter(adapter);
-
-        imageView = (ImageView) findViewById(R.id.imageView2);
+        nameText = findViewById(R.id.ideaText);
+        thumbImage = findViewById(R.id.thumPic);
         photoURI = null;
-    }
 
-    public void addPhone(View view){
-        String name = nameText.getText().toString();
-        String date = dateText.getText().toString();
-        String picUri;
-        if (photoURI != null){
-            picUri = String.valueOf(photoURI);
-        } else{
-            picUri = null;
-        }
-        Idea idea = new Idea(name, date, picUri);
-        ideas.add(idea);
-        adapter.notifyDataSetChanged();
+        //Create and init seekbar and value textview for rating, set default rating to 5
+        seekBar = (SeekBar)findViewById(R.id.rateBar);
+        seekBar.setProgress(5);
+        seekBar.setOnSeekBarChangeListener(this);
+
+        rateBarNum = (TextView)findViewById(R.id.rateBarNum);
+        rateBarNum.setText("5");
     }
 
     public void save(View view){
+        boolean empty = true;
+
         String name = nameText.getText().toString();
-        String date = dateText.getText().toString();
+        if(!nameText.getText().toString().equals("")){empty = false;}
+        String date = new SimpleDateFormat("H:mm, EEE d MMM").format(new Date());
         String picUri;
         if (photoURI != null){
             picUri = String.valueOf(photoURI);
         } else{
             picUri = null;
         }
+        if(picUri != null){empty = false;}
 
-        Comments comment = new Comments(name, date, picUri);
-        comment.save();
+        int rating = seekBar.getProgress();
 
-        Intent intent = new Intent();
+        if (!empty){
+            Comments comment = new Comments(name, date, picUri, rating);
+            comment.save();
 
-        intent.putExtra("id", comment.getId());
+            Intent intent = new Intent();
+            intent.putExtra("id", comment.getId());
+            setResult(RESULT_OK, intent);
+        }
 
-        setResult(RESULT_OK, intent);
+
 
         finish();
-    }
-    public void open(View view){
-        ideas = JSONHelper.importFromJSON(this);
-        if(ideas!=null){
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ideas);
-            listView.setAdapter(adapter);
-            Toast.makeText(this, "Данные восстановлены", Toast.LENGTH_LONG).show();
-        }
-        else{
-            Toast.makeText(this, "Не удалось открыть данные", Toast.LENGTH_LONG).show();
-        }
     }
 
     //---
@@ -111,9 +89,11 @@ public class NewIdeaActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            imageView.setImageURI(photoURI);
+            thumbImage.setImageURI(photoURI);
+            thumbImage.getLayoutParams().height=500;
+            thumbImage.requestLayout();
 
-        } else{ ;
+        } else{
             photoURI = null;
         }
         Log.e("MARK 3: ", String.valueOf(photoURI));
@@ -130,7 +110,8 @@ public class NewIdeaActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
+        String mCurrentPhotoPath = image.getAbsolutePath();
+        Log.e("our file", image.toString());
         return image;
     }
     private void dispatchTakePictureIntent() {
@@ -138,13 +119,15 @@ public class NewIdeaActivity extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
+            photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
+                ex.printStackTrace();
             }
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this,
@@ -156,5 +139,41 @@ public class NewIdeaActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    //change value textview on seekbar change
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        rateBarNum.setText(String.valueOf(seekBar.getProgress()));
+    }
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        rateBarNum.setText(String.valueOf(seekBar.getProgress()));
+    }
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        rateBarNum.setText(String.valueOf(seekBar.getProgress()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        System.out.println(String.valueOf(FileProvider.getUriForFile(this, "com.example.android.provider", photoFile)));
+        if (photoURI != null){
+            File file = new File(String.valueOf(FileProvider.getUriForFile(this, "com.example.android.provider", photoFile)));
+            file.delete();
+            if(file.exists()){
+                System.out.println("sdadsasdassssssssssssssssssssss");
+                try {
+                    file.getCanonicalFile().delete();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(file.exists()){
+                    System.out.println("sdadsasdassssssssssssssssssssss");
+                    getApplicationContext().deleteFile(file.getName());
+                }
+            }
+        }
+        finish();
     }
 }

@@ -3,65 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/main_header_selector"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="170dp"
-        app:srcCompat="@drawable/fullhd" />
-
-    <EditText
-        android:id="@+id/nameText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ideaе"/>
-    <EditText
-        android:id="@+id/dateText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Date/time"/>
-
-    <!--<EditText
-        android:id="@+id/picUri"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Pic URI (or null)"/>-->
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ADD"
-        android:onClick="addPhone"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/card_bg"
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TAKE PHOTO"
-            android:onClick="onPic"/>
+        <ImageView
+            android:id="@+id/thumPic"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <EditText
+            android:id="@+id/ideaText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"
-            android:onClick="save"/>
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:hint="@string/yourIdea"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/howGood"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Load"
-            android:onClick="open"/>
+            android:layout_marginTop="10dp"
+            android:text="@string/howGood"
+            android:textAlignment="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rateBarNum"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="10"
+                android:textAlignment="center"
+                android:textColor="@android:color/black" />
+
+            <SeekBar
+                android:id="@+id/rateBar"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:max="10"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:progress="3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/takePic"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onPic"
+                android:text="@string/take_photo" />
+            <Button
+                android:id="@+id/save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="save"
+                android:text="@string/save_idea" />
+        </LinearLayout>
     </LinearLayout>
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>
