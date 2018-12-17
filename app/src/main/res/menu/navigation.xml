@@ -7,11 +7,11 @@
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="NEW IDEA" />
+        android:title="" />
 
     <item
         android:id="@+id/navigation_notifications"
-        android:title="" />
+        android:icon="@drawable/chart_24dp"
+        android:title="@string/top_ideas" />
 
 </menu>

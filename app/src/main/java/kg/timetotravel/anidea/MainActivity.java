@@ -12,10 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-
-import com.orm.query.Condition;
-import com.orm.query.Select;
-
 import java.util.Random;
 
 import butterknife.BindView;
@@ -34,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tweets_recycler_view)
     RecyclerView mRecyclerView;
 
-    /*@BindView(R.id.buttonTest)
-    Button buttonTest;*/
+
+    @BindView(R.id.buttonNewIdea)
+    Button buttonTest;
 
     Random random;
 
@@ -47,13 +44,20 @@ public class MainActivity extends AppCompatActivity {
 
         random = new Random();
 
+        final View view = findViewById(R.id.navigation);
+        final int[] heightNav = {0};
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                heightNav[0] = view.getHeight();
+            }
+        });
 
         mRecyclerView.addOnScrollListener(new HideShowScrollListener() {
-
             @Override
             public void onHide() {
-                navigation.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(170);
+                navigation.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(heightNav[0]); //animate the hiding according to navBar's height (heightNav)
                 // hiding anim
             }
 
@@ -63,7 +67,22 @@ public class MainActivity extends AppCompatActivity {
                 // showing anim
             }
         });
+
         initRecyclerView();
+
+        //Set click listener for RecyclerView elements
+        tweetAdapter.setOnItemClickListener(new IdeasAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Log.d("CLICK", "onItemClick position: " + position);
+
+            }
+
+            @Override
+            public void onItemLongClick(int position, View v) {
+                Log.d("CLICK", "onItemLongClick pos = " + position);
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -71,24 +90,14 @@ public class MainActivity extends AppCompatActivity {
         tweetsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         tweetAdapter = new IdeasAdapter();
         tweetAdapter.setItems(Comments.findWithQuery(Comments.class, "SELECT * FROM COMMENTS ORDER BY ID DESC"));
-
         tweetsRecyclerView.setAdapter(tweetAdapter);
     }
 
-    //saved this to remember how ButterKnife works
-    /*@OnClick(R.id.buttonTest)
+    @OnClick(R.id.buttonNewIdea)
     public void OnClick(View view) {
-
-        Comments comment = new Comments("Test : " + random.nextInt(),
-                "Thu Dec 12 07:31:08",
-                "https://www.w3schools.com/w3css/img_fjords.jpg");
-
-        tweetAdapter.getTweetList().add(comment);
-        tweetAdapter.notifyDataSetChanged();
-
-        comment.save();
-        Log.i(TAG, "OnClick: ON test Click");
-    }*/
+        Intent intent = new Intent(MainActivity.this, NewIdeaActivity.class);
+        startActivityForResult(intent, 1);
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -96,15 +105,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.navigation_home: //Closing the ap
 
-                    return true;
                 case R.id.navigation_dashboard:
-                    Intent intent = new Intent(MainActivity.this, NewIdeaActivity.class);
-                    startActivityForResult(intent, 1);
-                    //return true;
+                    //empty
                 case R.id.navigation_notifications:
-                    return true;
+                    Intent intent = new Intent(MainActivity.this, TopIdeas.class);
+                    startActivity(intent);
+                    //return true;
             }
             return false;
         }
@@ -119,4 +127,6 @@ public class MainActivity extends AppCompatActivity {
             tweetAdapter.notifyDataSetChanged();
         }
     }
+
+
 }

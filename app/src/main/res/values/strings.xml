@@ -9,5 +9,8 @@
     <string name="take_photo">TAKE PHOTO</string>
     <string name="save_idea">Save</string>
     <string name="action_settings">Settings</string>
+    <string name="best_ideas">Best</string>
+    <string name="top_ideas">Top list</string>
+    <string name="exit">Exit</string>
 
 </resources>
